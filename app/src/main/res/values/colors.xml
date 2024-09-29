@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2B2B2B</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimaryLite">#393838</color>
+    <color name="colorAccentDark">#FFA500</color>
+    <color name="colorAccent">#FEDF03</color>
+    <color name="homeSearchBox">#DEE1E7</color>
+    <color name="green">#23E623</color>
+    <color name="grayDark">#5E5D5D</color>
+    <color name="amountRed">#FF4747</color>
+    <color name="transparent">#00000000</color>
+</resources>
