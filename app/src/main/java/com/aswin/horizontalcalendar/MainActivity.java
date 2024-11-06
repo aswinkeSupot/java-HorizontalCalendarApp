@@ -26,7 +26,7 @@ public class MainActivity extends LMTBaseActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        selectedDate = "2024-10-17"; // Eg:- 2024-10-17
+        selectedDate = "2024-12-15"; // Eg:- 2024-10-17
 
         setCalendarAdapter();
     }
@@ -42,14 +42,21 @@ public class MainActivity extends LMTBaseActivity {
                 selectedDate = calendars.get(datePos).get(Calendar.YEAR) + "-" + formatedMonthOrDate(calendars.get(datePos).get(Calendar.MONTH) + 1) + "-" + formatedMonthOrDate(calendars.get(datePos).get(Calendar.DATE));
 
                 // Do something while Clicking on date.
-
             }
         });
         binding.dateRecyclerView.setAdapter(datesAdapter);
+
+        // Scroll to the selected date position after the adapter is set
+        binding.dateRecyclerView.post(() -> linearLayoutManager.scrollToPositionWithOffset(selectedDatePos, 0));
+
         binding.dateRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                binding.tvMonth.setText(CommonUtils.getEnglishMonthShort((calendars.get(linearLayoutManager.findFirstVisibleItemPosition()).get(Calendar.MONTH) + 1) + "").toUpperCase());
+                int firstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition();
+                if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                    int month = calendars.get(firstVisiblePosition).get(Calendar.MONTH) + 1;
+                    binding.tvMonth.setText(CommonUtils.getEnglishMonthShort(String.valueOf(month)).toUpperCase());
+                }
             }
         });
 
@@ -58,13 +65,17 @@ public class MainActivity extends LMTBaseActivity {
     private List<String> getDates(int pos) {
         List<String> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.set(Calendar.YEAR, Integer.parseInt(selectedDate.split("-")[0]));
-        calendar2.set(Calendar.MONTH, Integer.parseInt(selectedDate.split("-")[1]));
-        calendar2.set(Calendar.DATE, Integer.parseInt(selectedDate.split("-")[2]));
+
+        Calendar selectedCalendar = Calendar.getInstance();
+        selectedCalendar.set(Calendar.YEAR, Integer.parseInt(selectedDate.split("-")[0]));
+        selectedCalendar.set(Calendar.MONTH, Integer.parseInt(selectedDate.split("-")[1]) -1 );
+        selectedCalendar.set(Calendar.DATE, Integer.parseInt(selectedDate.split("-")[2]));
+
         for (int i = 0; i < 120; i++) {
             dates.add(calendar.get(Calendar.DATE) + ", " + CommonUtils.getWeekDay(calendar.get(Calendar.DAY_OF_WEEK)));
-            if (calendar.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && (calendar.get(Calendar.MONTH)+1) == calendar2.get(Calendar.MONTH) && calendar.get(Calendar.DATE) == calendar2.get(Calendar.DATE)) {
+            if (calendar.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR) &&
+                    calendar.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH) &&
+                    calendar.get(Calendar.DATE) == selectedCalendar.get(Calendar.DATE)) {
                 selectedDatePos = i;
             }
             Calendar tempCal = Calendar.getInstance();
